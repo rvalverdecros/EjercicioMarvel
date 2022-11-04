@@ -115,6 +115,7 @@ fun main() {
                                                             }
                                                         }
                                                     }
+                                                    exitProcess(-1)
                                                 }
                                             }
                                         }
@@ -126,8 +127,50 @@ fun main() {
                 }
             }
         }
-    }else if (res == 3){
+    }else if (res == 3) {
+        println("Inserte ID del comic")
+        val comic = readLine().toString()
+        val mayuscula =
+            comic.replaceFirstChar { if (it.isLowerCase()) it.titlecase(Locale.getDefault()) else it.toString() }
+        val ficheroXML = File("resources/comicsMarvel.xml")
+        val nodoPadre = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(ficheroXML)
+        val root = nodoPadre.getElementsByTagName("root")
 
+        for (i in 0..root.length - 1) {
+            if (root.item(i).nodeType == Node.ELEMENT_NODE) {
+                var dat = root.item(i) as Element
+                var data = dat.getElementsByTagName("data")
+                for (j in 0..data.length - 1) {
+                    if (data.item(j).nodeType == Node.ELEMENT_NODE) {
+                        val res = data.item(j) as Element
+                        val result = res.getElementsByTagName("results")
+
+                        for (k in 0..result.length - 1) {
+                            if (result.item(k).nodeType == Node.ELEMENT_NODE) {
+
+                                var id = result.item(k) as Element
+                                var idcomic = id.getElementsByTagName("id")
+                                var titulocomic = id.getElementsByTagName("title")
+
+                                for (l in 0..idcomic.length - 1) {
+                                    val nombr = titulocomic.item(l) as Element
+                                    val nombrecomic = ("Nombre del comic: ${nombr.textContent}")
+                                    val idc = idcomic.item(l) as Element
+                                    val idcomicmarvel = "${idc.textContent}"
+                                    if (comic == idcomicmarvel) {
+                                        println("Comic Valido")
+                                        println(nombrecomic)
+                                        exitProcess(-1)
+                                    } else {
+                                        Buscar.buscarComic()
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }else if (res == 4){
 
     }else if (res == 5){
