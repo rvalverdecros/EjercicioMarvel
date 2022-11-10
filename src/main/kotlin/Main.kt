@@ -1,8 +1,14 @@
-import org.w3c.dom.Element
-import org.w3c.dom.Node
+import org.w3c.dom.*
 import java.io.File
 import java.util.*
+import javax.xml.parsers.DocumentBuilder
 import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.transform.OutputKeys
+import javax.xml.transform.Source
+import javax.xml.transform.Transformer
+import javax.xml.transform.TransformerFactory
+import javax.xml.transform.dom.DOMSource
+import javax.xml.transform.stream.StreamResult
 import kotlin.system.exitProcess
 
 fun main() {
@@ -172,8 +178,83 @@ fun main() {
             }
         }
     }else if (res == 4){
+        println("Introduce el nombre del primer personaje")
+        val peruno = readLine().toString()
+        println("Introduce el nombre del segundo personaje")
+        val perdos = readLine().toString()
+        val popprim = Filtrar.popularidad(peruno)
+        val popseg = Filtrar.popularidad(perdos)
 
+        if (popprim > popseg){
+            println("Tiene mas popularidad $peruno")
+        }else if (popprim == popseg){
+            println("Tienen la misma popularidad")
+        }else{
+            println("Tiene mas popularidad $perdos")
+        }
     }else if (res == 5){
+        println("Introduce el nombre del personaje")
+        val per = readLine().toString()
+
+        val idper = Filtrar.idper(per)
+
+        val desper = Filtrar.desper(per)
+
+        val popper = Filtrar.popularidad(per)
+
+        val idcom = Filtrar.idcomic(per)
+
+        val nomcom = Filtrar.nombrecomics(per)
+
+        val factory: DocumentBuilderFactory = DocumentBuilderFactory.newInstance()
+        val builder: DocumentBuilder = factory.newDocumentBuilder()
+        val imp: DOMImplementation = builder.domImplementation
+
+        val document: Document = imp.createDocument(null, "personajes", null)
+        val personaje: Element = document.createElement("personaje")
+        val id: Element = document.createElement("id")
+        val textoId: Text = document.createTextNode(idper.toString())
+        id.appendChild(textoId)
+        document.documentElement.appendChild(id)
+        val name: Element = document.createElement("name")
+        val nameper: Text = document.createTextNode(per)
+        name.appendChild(nameper)
+        document.documentElement.appendChild(name)
+        val description: Element = document.createElement("description")
+        val descriptionper: Text = document.createTextNode(desper)
+        description.appendChild(descriptionper)
+        document.documentElement.appendChild(description)
+        val comics: Element = document.createElement("comics")
+        val comic: Element = document.createElement("comic")
+
+        for (i in 0..popper -1){
+            val idcomic: Element = document.createElement("id")
+            val idcomics: Text = document.createTextNode(idcom[i].toString())
+            idcomic.appendChild(idcomics)
+            document.documentElement.appendChild(idcomic)
+            val titcomic: Element = document.createElement("titulo")
+            val titulocomic: Text = document.createTextNode(nomcom[i])
+            titcomic.appendChild(titulocomic)
+            document.documentElement.appendChild(titcomic)
+            val comicdes = Filtrar.compdesc(idcom[i])
+            val descom: Element = document.createElement("description")
+            val description: Text = document.createTextNode(comicdes)
+            descom.appendChild(description)
+            document.documentElement.appendChild(descom)
+        }
+        document.documentElement.appendChild(comic)
+        document.documentElement.appendChild(comics)
+        document.documentElement.appendChild(personaje)
+
+        val source: Source = DOMSource(document)
+
+        val result= StreamResult(File("resources/perycomic.xml"))
+
+        val transformer: Transformer = TransformerFactory.newInstance().newTransformer()
+
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes")
+
+        transformer.transform(source, result)
 
     }else{
         println("Error! Opcion no identificada")
