@@ -13,14 +13,15 @@ import kotlin.system.exitProcess
 
 fun main() {
     println("Hola, seleccione una opcion de las posibles")
-    println("1. Informacion de un personaje")
-    println("2. Cantidad de comics que aparece el personaje")
+    println("1. ¿Existe el personaje?")
+    println("2. Comics en los que aparece el personaje")
     println("3. Mostrar comic por id")
     println("4. Comparar poppularidad entre dos heroes")
     println("5. XML del personaje y comic")
 
     val res = readln().toInt()
 
+    val hola = File("fileName").writeText("hola")
     if (res ==1){
         println("Introduce el nombre del personaje")
         val per = readLine().toString()
